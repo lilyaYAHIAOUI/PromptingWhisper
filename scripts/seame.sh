@@ -1,3 +1,4 @@
+#!/bin/bash
 
 dataset="seame"
 model="large"
