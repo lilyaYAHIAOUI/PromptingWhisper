@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # both dataset and post-processing are dataset specific, so all done in ${dataset}.py
     if args.dataset == "ascend":
-        from data.ascend import get_dataloader, calc_metrics
+        from data.ascend import get_dataloader
     elif args.dataset == "seame":
         from data.seame import get_dataloader, calc_metrics
     elif args.dataset == "covost2":
@@ -132,14 +132,16 @@ if __name__ == "__main__":
     preds = []
     single_preds = []
     prompts = []
-
+    audio_paths =[]
+    outputs ={}
     for i, b in enumerate(tqdm(data_loader)):
+
         input_mels = b["input_mels"].half().cuda()
-        raw_texts = b['raw_text']
+        paths=b["audio_paths"]
         with torch.no_grad():
                 
             # for input_mel, label in zip(input_mels, labels):
-            for input_mel, raw_text in zip(input_mels, raw_texts):
+            for input_mel, path in zip(input_mels, paths):
                 if args.code_switching != "0":
                     main_lang, second_lang = args.code_switching.split("-")
                     _, probs = whisper.detect_language(model, input_mel)
@@ -158,29 +160,9 @@ if __name__ == "__main__":
                 with torch.no_grad():
                     results = whisper.decode(model, input_mel, options)
                 preds.append(results.text)
-                ref = raw_text
-                refs.append(ref)
-
-    
-    inference_metrics, (wer_list, processed_preds, processed_refs) = calc_metrics()(refs, preds)
-    print("results:", inference_metrics)
-    print("results:", inference_metrics)
-    # in the case of speech translation, the metric is actually BLUE score
-    if args.topk > 0:
-        import numpy as np
-        inds = np.argsort(wer_list)[::-1]
-        for ind in inds[:args.topk]:
-            print("-"*10)
-            print("wer/mer: ", wer_list[ind])
-            print("ref: ", processed_refs[ind])
-            print("pred: ", processed_preds[ind])
-            # print("prompt: ", prompts[ind])
-    else:
-        for j, (k, v) in enumerate(zip(processed_refs, processed_preds)):
-            if j % 100 == 0:
-                print("-"*10)
-                print("ref: ", k)
-                print("pred: ", v)
-    
-    print("results:", inference_metrics)
-    print("results:", inference_metrics)
+            
+                audio_paths.append(path)    
+    outputs["file_names"] = audio_paths
+    outputs['predictions'] = preds
+    df_results= pd.DataFrame(outputs)
+    df_results.to_csv('seame_conversation_phase1_prompted_whisper.csv',index=False)
