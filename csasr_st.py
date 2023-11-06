@@ -30,7 +30,7 @@ if __name__ == "__main__":
     if args.dataset == "ascend":
         from data.ascend import get_dataloader
     elif args.dataset == "seame":
-        from data.seame import get_dataloader, calc_metrics
+        from data.seame import get_dataloader
     elif args.dataset == "covost2":
         from data.covost2 import get_dataloader
         if args.language == "zh":
