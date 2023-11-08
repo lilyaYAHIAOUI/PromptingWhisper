@@ -41,12 +41,14 @@ class SEAMEDataset(torch.utils.data.Dataset):
         self.args = args
         self.sample_rate = sample_rate
         self.tokenizer =  whisper.tokenizer.get_tokenizer(True, language="zh", task="transcribe")
-        self.data = []
         self.audio_files = list(Path(dataset_dir).rglob('*.wav'))
+        print(self.args)
+        print(self.sample_rate)
+        print(dataset_dir)
 
 
     def __len__(self):
-        return len(self.data)
+        return len(self.audio_files)
     
     def __getitem__(self, id):
         audio_path = self.audio_files[id]
@@ -80,9 +82,8 @@ def get_dataloader(args):
     dataset = SEAMEDataset(args, args.sample_rate,'/kaggle/input/seame-conversation-phase1/dev_man_audio')
     print("dataset size: ", len(dataset))
     loader = torch.utils.data.DataLoader(dataset, 
-                        batch_size=args.batch_size, 
-                        drop_last=False, shuffle=False, num_workers=args.num_workers,
+                        batch_size=args.batch_size, drop_last=False, shuffle=False, 
+                        num_workers=1,
                         collate_fn=dataset.collate, persistent_workers=True
                         )
-
     return tokenizer, loader
