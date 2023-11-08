@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dataset="seame"
-model="large"
+model="largev2"
 dataset_dir="/kaggle/input/seame-conversation-phase1/phase1"
 single_lang_threshold=1
 concat_lang_token=1

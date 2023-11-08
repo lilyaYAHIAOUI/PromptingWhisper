@@ -145,6 +145,7 @@ if __name__ == "__main__":
             # for input_mel, label in zip(input_mels, labels):
             for input_mel, path in zip(input_mels, paths):
                 if args.code_switching != "0":
+                    print('ok  cs')
                     main_lang, second_lang = args.code_switching.split("-")
                     _, probs = whisper.detect_language(model, input_mel)
                     max_lang = max(probs, key=probs.get)
