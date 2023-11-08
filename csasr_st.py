@@ -44,6 +44,8 @@ if __name__ == "__main__":
     ###################################
 
     tokenizer, data_loader = get_dataloader(args)
+    print('LANGUAGE')
+    print(args.language)
     model = whisper.load_model(args.model)
 
     model.eval()
