@@ -79,7 +79,7 @@ class SEAMEDataset(torch.utils.data.Dataset):
 def get_dataloader(args):
 
     tokenizer =  whisper.tokenizer.get_tokenizer(multilingual=True, language="zh", task=args.task)
-    dataset = SEAMEDataset(args, args.sample_rate,'/kaggle/input/dev-sge/dev_sge_audio')
+    dataset = SEAMEDataset(args, args.sample_rate,'/kaggle/input/seame-conversation-phase1/dev_man_audio')
     print("dataset size: ", len(dataset))
     loader = torch.utils.data.DataLoader(dataset, 
                         batch_size=args.batch_size, drop_last=False, shuffle=False, 
